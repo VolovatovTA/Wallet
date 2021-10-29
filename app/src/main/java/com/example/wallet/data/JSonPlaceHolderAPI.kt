@@ -41,13 +41,13 @@ interface JSonPlaceHolderAPI {
 
     /////////////////////
     // Authorization
-    @POST("api/v1/signUp")
-    fun signUp(@Body credentials: RequestBody): Call<authTokens>
+    @POST("auth/signUp")
+    fun signUp(@Body credentials: RequestBody): Call<AuthTokensResponse>
 
 
-    @POST("api/v1/signIn")
-    fun signIn(@Body credentials: RequestBody): Call<JSONObject>
+    @POST("auth/signIn")
+    fun signIn(@Body credentials: RequestBody): Call<AuthTokensResponse>
 
-    @POST("api/v1/signIn")
-    fun reSignIn(@Body refreshToken: RequestBody): Call<authTokens>
+    @POST("auth/signIn")
+    fun reSignIn(@Body refreshToken: RequestBody): Call<AuthTokensResponse>
 }

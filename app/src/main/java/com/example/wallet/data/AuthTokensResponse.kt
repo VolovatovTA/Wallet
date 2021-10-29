@@ -3,18 +3,12 @@ package com.example.wallet.data
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class authTokens (
-    @SerializedName("access")
+data class AuthTokensResponse (
+    @SerializedName("tokens")
     @Expose
-    var accessToken: String,
-    @SerializedName("refresh")
-    @Expose
-    var refreshToken: String
+    var tokens: AuthTokens,
 )
-data class authTokensAndLog (
-    @SerializedName("log")
-    @Expose
-    var log: String,
+data class AuthTokens (
     @SerializedName("access")
     @Expose
     var accessToken: String,

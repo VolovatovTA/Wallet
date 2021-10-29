@@ -14,6 +14,7 @@ class DataSource {
     lateinit var transactions: List<myTransaction>
     lateinit var transaction: myTransaction
 
+
     private val callbackTransactions: retrofit2.Callback<List<myTransaction>> =
         object : retrofit2.Callback<List<myTransaction>> {
             override fun onResponse(

@@ -19,6 +19,8 @@ import android.widget.Toast
 import com.example.wallet.databinding.FragmentLoginBinding
 
 import com.example.wallet.R
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment(), View.OnClickListener {
 
@@ -42,6 +44,8 @@ class LoginFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
         loginViewModel = ViewModelProvider(this, MyViewModelFactory())
             .get(LoginViewModel::class.java)
 
@@ -115,6 +119,8 @@ class LoginFragment : Fragment(), View.OnClickListener {
         }
         signUpTextView.setOnClickListener(this)
     }
+
+
 
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome) + model.displayName

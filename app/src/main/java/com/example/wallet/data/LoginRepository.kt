@@ -1,5 +1,6 @@
 package com.example.wallet.data
 
+import android.util.Log
 import com.example.wallet.data.model.LoggedInUser
 
 /**
@@ -29,6 +30,8 @@ class LoginRepository(val dataSource: LoginDataSource) {
 
     fun login(username: String, password: String): Result<LoggedInUser> {
         // handle login
+        Log.d("Timofey", "login in rep")
+
         val result = dataSource.login(username, password)
 
         if (result is Result.Success) {

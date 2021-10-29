@@ -36,6 +36,7 @@ class RegistrationFragment : Fragment() {
         val personRepeatPasswordInRegistration = binding.editTextTextPassword2
         val signUpButton = binding.signUpButton
 
+
         registrationViewModel = ViewModelProvider(this, MyViewModelFactory())
             .get(RegistrationViewModel::class.java)
         registrationViewModel.registrationFormState.observe(viewLifecycleOwner, Observer {
