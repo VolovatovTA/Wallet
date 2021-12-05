@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "622472175108",
+    "project_id": "wallet-edacc",
+    "storage_bucket": "wallet-edacc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622472175108:android:bc0534f83ff99439719f51",
+        "android_client_info": {
+          "package_name": "com.example.wallet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622472175108-ojqfm08odsnbf1g5cbq55791i6n2cdo1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wallet",
+            "certificate_hash": "e4a4cfa882d8a5b580d3ae67e51202f40813aaa0"
+          }
+        },
+        {
+          "client_id": "622472175108-a73bcb04bi36q2pnip23uesvt5o7s54e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEfcu_EDHcjRFhmZAn1-Fh1Mzwx63a2Tk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622472175108-a73bcb04bi36q2pnip23uesvt5o7s54e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

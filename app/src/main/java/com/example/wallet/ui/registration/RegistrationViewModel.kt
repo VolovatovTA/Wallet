@@ -5,10 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.wallet.R
-import com.example.wallet.data.LoginRepository
+import com.example.wallet.data.Repository
 import com.example.wallet.data.Result
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
 
-class RegistrationViewModel(private val loginRepository: LoginRepository) : ViewModel(){
+class RegistrationViewModel(private val repository: Repository) : ViewModel(){
     private val _registrationForm = MutableLiveData<RegistrationFormState>()
     val registrationFormState: LiveData<RegistrationFormState> = _registrationForm
 
@@ -17,14 +20,17 @@ class RegistrationViewModel(private val loginRepository: LoginRepository) : View
 
     fun signUp(userFirstName: String, userSecondName: String, email: String, password: String, confirmPassword: String) {
         // can be launched in a separate asynchronous job
-        val result = loginRepository.signUp(userFirstName, userSecondName, email, password, confirmPassword)
+        CoroutineScope(Main).launch {
+            val result = repository.signUp(userFirstName, userSecondName, email, password, confirmPassword)
 
-        if (result is Result.Success) {
-            _registrationResult.value =
-                RegistrationResult(success = RegistratedInUserView(displayName = result.data.firstName + " " + result.data.secondName))
-        } else {
-            _registrationResult.value = RegistrationResult(error = R.string.login_failed)
+            if (result is Result.Success) {
+                _registrationResult.value =
+                    RegistrationResult(success = RegistratedInUserView(displayName = result.data.firstName + " " + result.data.secondName))
+            } else {
+                _registrationResult.value = RegistrationResult(error = R.string.login_failed_by_password_or_email)
+            }
         }
+
     }
 
     fun registrationDataChanged(

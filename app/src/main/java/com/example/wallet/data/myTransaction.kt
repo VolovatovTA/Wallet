@@ -11,20 +11,26 @@ data class myTransaction (
     @SerializedName("userId")
     @Expose
     var userId : UUID,
-    @SerializedName("created")
+    @SerializedName("categoryId")
     @Expose
-    var dateOfCreate : String,
-    @SerializedName("updated")
-    @Expose
-    var dateOfUpdate : String,
+    var categoryId : UUID?,
     @SerializedName("comment")
     @Expose
     var commentTransaction : String,
+    @SerializedName("amount")
+    @Expose
+    var amount: Float,
     @SerializedName("currency")
     @Expose
     var currency : String,
-    @SerializedName("amount")
+    @SerializedName("type")
     @Expose
-    var amount: Float
+    var type : String,
+    @SerializedName("updated")
+    @Expose
+    var dateOfUpdate : Date,
+    @SerializedName("created")
+    @Expose
+    var dateOfCreate : Date
 
 )

@@ -1,18 +1,32 @@
 package com.example.wallet.ui.login
 
+import android.content.Context
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import android.util.Patterns
-import com.example.wallet.data.LoginRepository
-import com.example.wallet.data.Result
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.*
 
 import com.example.wallet.R
-import kotlinx.coroutines.GlobalScope
+import com.example.wallet.data.*
+import com.example.wallet.data.model.LoggedInUser
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel(private val repository: Repository) : ViewModel() {
+    private val TAG_Tim = "Timofey"
+
+    enum class AuthenticationState {
+        AUTHENTICATED, UNAUTHENTICATED, INVALID_AUTHENTICATION
+    }
+
+    val authenticationState = FirebaseUserLiveData().map { user ->
+        if (user != null) {
+            AuthenticationState.AUTHENTICATED
+        } else {
+            AuthenticationState.UNAUTHENTICATED
+        }
+    }
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -20,25 +34,42 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    fun login(username: String, password: String) {
+    fun login(email: String, password: String) {
         // can be launched in a separate asynchronous job
-        GlobalScope.launch {
-
-        }
-
-        Log.d("Timofey", "launch")
-
-        val result = loginRepository.login(username, password)
-
-        if (result is Result.Success) {
-            _loginResult.value =
-                LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
-        } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
+    CoroutineScope(Main).launch {
+        when (val result = repository.dataSource.login(email, password)) {
+            is Result.Success -> {
+                _loginResult.value = LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
+            }
+            is Result.Error -> {
+                if (result.data.displayMessage != 0)
+                _loginResult.value = LoginResult(error = result.data.displayMessage)
+            }
+            is Result.Another -> {
+                _loginResult.value = LoginResult(error = R.string.something_went_wrong)
+            }
         }
     }
 
 
+
+    }
+
+
+
+
+//    fun saveRefreshToken(activity: FragmentActivity?) {
+//        val APP_PREFERENCES = "mySettingsAndTokens"
+//
+//
+//        if (activity != null){
+//
+//            val sp = activity.applicationContext.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+//            sp.edit().putString("access token", accessToken).apply()
+//            sp.edit().putString("refresh token", refreshToken).apply()
+//        }
+//
+//    }
     fun loginDataChanged(username: String, password: String) {
         if (!isUserNameValid(username)) {
             _loginForm.value = LoginFormState(usernameError = R.string.invalid_username)
@@ -51,10 +82,10 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
 
     // A placeholder username validation check
     private fun isUserNameValid(username: String): Boolean {
-        return if (username.contains("@")) {
+        return if (username.contains("@") && username.isNotBlank()) {
             Patterns.EMAIL_ADDRESS.matcher(username).matches()
         } else {
-            username.isNotBlank()
+            false
         }
     }
 
@@ -62,4 +93,8 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }
+
+
+
+
 }

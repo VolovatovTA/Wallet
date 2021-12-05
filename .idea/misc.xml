@@ -3,9 +3,26 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/activity_main.xml" value="0.129981884057971" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/drawable/ic_add_black_24dp.xml" value="0.2703125" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/drawable/ic_baseline_attach_money_24.xml" value="0.2703125" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/drawable/ic_baseline_money_off_24.xml" value="0.2703125" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.2703125" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/drawable/ic_home_black_24dp.xml" value="0.2703125" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.2703125" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/drawable/icons_background.xml" value="0.2703125" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/drawable/icons_background_green.xml" value="0.2703125" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/drawable/icons_background_red.xml" value="0.2703125" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/drawable/transaction_background.xml" value="0.2703125" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/blank_for_create_transaction_fragment.xml" value="0.25416666666666665" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/fragment_item.xml" value="0.4" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/fragment_item_list.xml" value="0.4" />
         <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/fragment_login.xml" value="0.264" />
         <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/fragment_registration.xml" value="0.25416666666666665" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/item_of_day.xml" value="0.4" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/menu/bottom_nav_menu.xml" value="0.16" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/menu/menu_edit_delete.xml" value="0.25416666666666665" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/menu/menu_main.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>

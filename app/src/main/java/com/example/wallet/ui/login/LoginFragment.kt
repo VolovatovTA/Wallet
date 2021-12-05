@@ -1,5 +1,7 @@
 package com.example.wallet.ui.login
 
+import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.annotation.StringRes
@@ -12,21 +14,67 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.activity.addCallback
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.wallet.databinding.FragmentLoginBinding
 
 import com.example.wallet.R
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.IdpResponse
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import android.view.WindowManager
+import android.widget.EditText
+import androidx.navigation.Navigation
+import com.example.wallet.databinding.ActivityMainBinding
+import com.google.android.material.navigation.NavigationView
+import java.lang.StringBuilder
+
 
 class LoginFragment : Fragment(), View.OnClickListener {
 
     private lateinit var loginViewModel: LoginViewModel
-    private var _binding: FragmentLoginBinding? = null
+    var _binding: FragmentLoginBinding? = null
+    private lateinit var navController: NavController
 
+    companion object {
+        const val TAG = "Timofey"
+        const val SIGN_IN_RESULT_CODE = 1001
+    }
+//    private fun launchSignInFlow() {
+//        Log.d(TAG, "launchSignInFlow")
+//
+//        val providers = arrayListOf(
+//            AuthUI.IdpConfig.EmailBuilder().build(), AuthUI.IdpConfig.GoogleBuilder().build()
+//        )
+//
+//        startActivityForResult(
+//            AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(
+//                providers
+//            ).build(), SIGN_IN_RESULT_CODE
+//        )
+//    }
+
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode == SIGN_IN_RESULT_CODE) {
+//            val response = IdpResponse.fromResultIntent(data)
+//            if (resultCode == Activity.RESULT_OK) {
+//                // Successfully signed in user.
+//                i(
+//                    TAG,
+//                    "Successfully signed in user " +
+//                            "${FirebaseAuth.getInstance().currentUser?.displayName}!"
+//                )
+//            } else {
+//                Log.i(TAG, "Sign in unsuccessful ${response?.error?.errorCode}")
+//            }
+//        }
+//    }
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -37,6 +85,10 @@ class LoginFragment : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View? {
 
+//        bindingActivity = ActivityMainBinding.inflate(layoutInflater)
+        Log.d(TAG, "LoginFragment onCreateView")
+
+
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -46,8 +98,7 @@ class LoginFragment : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
 
 
-        loginViewModel = ViewModelProvider(this, MyViewModelFactory())
-            .get(LoginViewModel::class.java)
+        loginViewModel = ViewModelProvider(this, MyViewModelFactory())[LoginViewModel::class.java]
 
         val usernameEditText = binding.username
         val passwordEditText = binding.password
@@ -55,6 +106,16 @@ class LoginFragment : Fragment(), View.OnClickListener {
         val loadingProgressBar = binding.loading
         val signUpTextView = binding.registration
         val forgotPasswordTextView = binding.forgotPassword
+        val signInWithGoogleButton = binding.btnSignInWithGoogle
+
+            /*
+            DELETE Before publication
+             */
+        binding.autoIn.setOnClickListener{
+            usernameEditText.text = Editable.Factory.getInstance().newEditable("1@1.1")
+            passwordEditText.text = Editable.Factory.getInstance().newEditable("111111")
+
+        }
 
         loginViewModel.loginFormState.observe(viewLifecycleOwner,
             Observer { loginFormState ->
@@ -78,6 +139,7 @@ class LoginFragment : Fragment(), View.OnClickListener {
                     showLoginFailed(it)
                 }
                 loginResult.success?.let {
+//                    loginViewModel.saveRefreshToken(activity)
                     updateUiWithUser(it)
                 }
             })
@@ -117,7 +179,31 @@ class LoginFragment : Fragment(), View.OnClickListener {
                 passwordEditText.text.toString()
             )
         }
+//        signInWithGoogleButton.setOnClickListener { launchSignInFlow() }
         signUpTextView.setOnClickListener(this)
+//        loginViewModel.loginWithRefreshToken(activity)
+        navController = findNavController()
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            navController.popBackStack(R.id.loginFragment, false)
+        }
+
+//        loginViewModel.authenticationState.observe(viewLifecycleOwner, Observer { authenticationState ->
+//            when (authenticationState) {
+//                LoginViewModel.AuthenticationState.AUTHENTICATED -> {
+//                    navController.popBackStack()
+//                    navController.navigate(R.id.transactionItemFragment)
+//                }
+//                LoginViewModel.AuthenticationState.INVALID_AUTHENTICATION -> Snackbar.make(
+//                    view, requireActivity().getString(R.string.login_failed),
+//                    Snackbar.LENGTH_LONG
+//                ).show()
+//                else -> Log.e(
+//                    TAG,
+//                    "Authentication state that doesn't require any UI change $authenticationState"
+//                )
+//            }
+//        })
     }
 
 
@@ -127,6 +213,7 @@ class LoginFragment : Fragment(), View.OnClickListener {
         // TODO : initiate successful logged in experience
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
+        navController.navigate(R.id.transactionItemFragment)
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
@@ -142,8 +229,7 @@ class LoginFragment : Fragment(), View.OnClickListener {
     override fun onClick(p0: View?) {
 //        Log.d("Timofey", "onClick, p0.id = " + p0?.id + "; R.id.registration = " + R.id.registration)
         if (p0?.id == R.id.registration){
-            val registrationFragment = RegistrationFragment()
-            activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.container, registrationFragment)?.addToBackStack("Registration")?.commit()
+            navController.navigate(R.id.registrationFragment)
         }
     }
 }

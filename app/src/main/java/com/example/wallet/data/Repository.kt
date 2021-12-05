@@ -1,15 +1,13 @@
 package com.example.wallet.data
 
+import android.content.Context
 import android.util.Log
+import androidx.fragment.app.FragmentActivity
 import com.example.wallet.data.model.LoggedInUser
 
-/**
- * Class that requests authentication and user information from the remote data source and
- * maintains an in-memory cache of login status and user credentials information.
- */
 
-class LoginRepository(val dataSource: LoginDataSource) {
-
+object Repository {
+    val dataSource = DataSource()
     // in-memory cache of the loggedInUser object
     var user: LoggedInUser? = null
         private set
@@ -28,7 +26,7 @@ class LoginRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    suspend fun login(username: String, password: String): Result<LoggedInUser> {
         // handle login
         Log.d("Timofey", "login in rep")
 
@@ -47,7 +45,7 @@ class LoginRepository(val dataSource: LoginDataSource) {
         // @see https://developer.android.com/training/articles/keystore
     }
 
-    fun signUp(
+    suspend fun signUp(
         userFirstName: String,
         userSecondName: String,
         email: String,
@@ -57,4 +55,12 @@ class LoginRepository(val dataSource: LoginDataSource) {
 
         return dataSource.signUp(userFirstName, userSecondName, email, password, confirmPassword)
     }
+    fun loginWithRefreshToken(activity: FragmentActivity?) {
+        val settings = activity?.getSharedPreferences("mySettings", Context.MODE_PRIVATE)
+        val refreshTokenFromStorage = settings?.getString("refresh token", "")
+
+        Log.d("Timofey", "refreshTokenFromStorage = $refreshTokenFromStorage")
+
+    }
+
 }

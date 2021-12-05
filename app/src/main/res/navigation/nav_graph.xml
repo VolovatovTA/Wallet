@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+    <fragment
+        android:id="@+id/transactionItemFragment"
+        android:name="com.example.wallet.ui.transactions.TransactionItemFragment"
+        android:label="fragment_item_list"
+        tools:layout="@layout/fragment_item_list" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.wallet.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="com.example.wallet.ui.login.RegistrationFragment"
+        android:label="fragment_registration"
+        tools:layout="@layout/fragment_registration" />
+    <fragment
+        android:id="@+id/blankForCreateTransactionFragment"
+        android:name="com.example.wallet.ui.transactions.BlankForCreateTransactionFragment"
+        android:label="blank_for_create_transaction_fragment"
+        tools:layout="@layout/blank_for_create_transaction_fragment" />
+</navigation>

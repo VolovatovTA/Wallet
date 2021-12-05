@@ -6,48 +6,50 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface JSonPlaceHolderAPI {
+
+
     // Transactions
     @GET("transaction/{id}")
-    fun getTransaction(@Header("Authorization") accessToken: String, @Path("id") id: String): Call<myTransaction>
+    fun getTransaction(@Header("X-Auth-Token") accessToken: String, @Path("id") id: String): Call<myTransaction>
 
     @GET("transaction")
-    fun getTransactions(@Header("Authorization") accessToken: String): Call<List<myTransaction>>
+    fun getTransactions(@Header("X-Auth-Token") accessToken: String): Call<List<myTransaction>>
 
     @POST("transaction")
-    fun createTransaction(@Header("Authorization") accessToken: String, @Body transaction: RequestBody): Call<String>
+    fun createTransaction(@Header("X-Auth-Token") accessToken: String, @Body transaction: RequestBody): Call<myTransaction>
 
     @PUT("transaction/{id}")
-    fun updateTransaction(@Header("Authorization") accessToken: String, @Body transaction: RequestBody, @Path("id") id: String): Call<String>
+    fun updateTransaction(@Header("X-Auth-Token") accessToken: String, @Body transaction: RequestBody, @Path("id") id: String): Call<String>
 
     @DELETE("transaction/{id}")
-    fun deleteTransaction(@Header("Authorization") accessToken: String, @Path("id") id: String): Call<String>
+    fun deleteTransaction(@Header("X-Auth-Token") accessToken: String, @Path("id") id: String): Call<String>
 
     ////////////////////
     // Categories
     @GET("category/{id}")
-    fun getCategory(@Header("Authorization") accessToken: String, @Path("id") id: Int): Call<CategoryTransaction>
+    fun getCategory(@Header("X-Auth-Token") accessToken: String, @Path("id") id: Int): Call<CategoryTransaction>
 
     @GET("category")
-    fun getCategories(@Header("Authorization") accessToken: String, @Path("id") id: Int): Call<List<CategoryTransaction>>
+    fun getCategories(@Header("X-Auth-Token") accessToken: String, @Path("id") id: Int): Call<List<CategoryTransaction>>
 
     @POST("category")
-    fun createCategory(@Header("Authorization") accessToken: String, @Body categoryTransaction: RequestBody): Call<String>
+    fun createCategory(@Header("X-Auth-Token") accessToken: String, @Body categoryTransaction: RequestBody): Call<String>
 
     @PUT("category/{id}")
-    fun updateCategory(@Header("Authorization") accessToken: String, @Body transaction: RequestBody, @Path("id") id: String)
+    fun updateCategory(@Header("X-Auth-Token") accessToken: String, @Body transaction: RequestBody, @Path("id") id: String)
 
     @DELETE("category/{id}")
-    fun deleteCategory(@Header("Authorization") accessToken: String, @Path("id") id: String): Call<String>
+    fun deleteCategory(@Header("X-Auth-Token") accessToken: String, @Path("id") id: String): Call<String>
 
     /////////////////////
     // Authorization
     @POST("auth/signUp")
-    fun signUp(@Body credentials: RequestBody): Call<AuthTokensResponse>
+    fun signUp(@Body credentials: RequestBody): Call<AuthTokens>
 
 
     @POST("auth/signIn")
-    fun signIn(@Body credentials: RequestBody): Call<AuthTokensResponse>
+    fun signIn(@Body credentials: RequestBody): Call<AuthTokens>
 
-    @POST("auth/signIn")
-    fun reSignIn(@Body refreshToken: RequestBody): Call<AuthTokensResponse>
+    @POST("auth/refresh")
+    fun reSignIn(@Body refreshToken: RequestBody): Call<AuthTokens>
 }
