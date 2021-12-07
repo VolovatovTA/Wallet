@@ -1,14 +1,15 @@
 package com.example.wallet.ui.transactions
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.example.wallet.MainActivity
 import com.example.wallet.R
 import com.example.wallet.data.MyTransactionItemRecyclerViewAdapter
 import com.example.wallet.data.placeholder.PlaceholderContent
@@ -21,7 +22,7 @@ class TransactionItemFragment : Fragment() {
     private val TAG = "Timofey"
     lateinit var binding: FragmentItemListBinding
     private val transactionViewModel: TransactionsViewModel = TransactionsViewModel
-    var isSelctionMode = false
+    private val adapterListTransactions = MyTransactionItemRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,27 +37,31 @@ class TransactionItemFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentItemListBinding.inflate(inflater, container, false)
 
 
         return binding.root
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
 
-        if (isSelctionMode){
-            inflater.inflate(R.menu.menu_edit_delete, menu)
-        }
-    }
+
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "onViewCreated itemsFragment")
+        with(binding.list) {
+            layoutManager = when {
 
+                columnCount <= 1 -> LinearLayoutManager(context)
+                else -> GridLayoutManager(context, columnCount)
+            }
 
+            adapterListTransactions.setOnItemLongClick {
 
-
+                true
+            }
+            adapter = adapterListTransactions
+        }
         transactionViewModel.transactionFormState.observe(viewLifecycleOwner,
             Observer { transactionFormState ->
                 if (transactionFormState != null) {
@@ -64,24 +69,13 @@ class TransactionItemFragment : Fragment() {
                         transactionFormState.allIsGood -> {
                             binding.ProgressBar.visibility = View.GONE
                             binding.list.visibility = View.VISIBLE
-                            with(binding.list) {
-                                layoutManager = when {
 
-                                    columnCount <= 1 -> LinearLayoutManager(context)
-                                    else -> GridLayoutManager(context, columnCount)
-                                }
-                                val myTransactionItemRecyclerViewAdapter = MyTransactionItemRecyclerViewAdapter(PlaceholderContent.transactionsWithSeparators)
-
-                                myTransactionItemRecyclerViewAdapter.setOnItemLongClick {
-
-                                    true
-                                }
-                                adapter = myTransactionItemRecyclerViewAdapter
-                            }
                         }
                         transactionFormState.isEmptyListTransactions -> {
+                            (requireActivity() as MainActivity).isSelectionMode = false
+                            requireActivity().invalidateOptionsMenu()
                             binding.ProgressBar.visibility = View.GONE
-                            binding.listWhenTransactionsIsNull.visibility = View.GONE
+                            binding.list.visibility = View.GONE
                             binding.listWhenTransactionsIsNull.visibility = View.VISIBLE
                         }
                         transactionFormState.isDataLoading -> {
@@ -89,7 +83,13 @@ class TransactionItemFragment : Fragment() {
                             binding.list.visibility = View.GONE
                         }
                         transactionFormState.isSelectionMode -> {
+                            (requireActivity() as MainActivity).isSelectionMode = true
+                            requireActivity().invalidateOptionsMenu()
+                            Log.d(TAG, "placeholder = ${PlaceholderContent.transactionsWithSeparators}")
 
+                        }
+                        transactionFormState.isTransactionsDeleted -> {
+                            adapterListTransactions.notifyDataSetChanged()
                         }
                     }
                 }
@@ -104,7 +104,6 @@ class TransactionItemFragment : Fragment() {
         binding.addTransactionFloatingActionButton.setOnClickListener {
             findNavController().navigate(R.id.blankForCreateTransactionFragment)
         }
-        Log.d(TAG, "onCreateView itemsFragment")
 
 //        observeAuthenticationState()
     }

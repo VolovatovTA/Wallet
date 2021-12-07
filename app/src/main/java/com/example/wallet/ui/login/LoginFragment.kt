@@ -17,21 +17,11 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.wallet.databinding.FragmentLoginBinding
 
 import com.example.wallet.R
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.IdpResponse
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import android.view.WindowManager
-import android.widget.EditText
-import androidx.navigation.Navigation
-import com.example.wallet.databinding.ActivityMainBinding
-import com.google.android.material.navigation.NavigationView
-import java.lang.StringBuilder
 
 
 class LoginFragment : Fragment(), View.OnClickListener {
@@ -128,6 +118,10 @@ class LoginFragment : Fragment(), View.OnClickListener {
                 }
                 loginFormState.passwordError?.let {
                     passwordEditText.error = getString(it)
+                }
+                loginFormState.isNetworkError?.let {
+                    loadingProgressBar.visibility = View.GONE
+                    Snackbar.make(binding.root, "Sorry the connection is lost", Snackbar.LENGTH_LONG).show()
                 }
             })
 

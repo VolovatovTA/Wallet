@@ -16,7 +16,7 @@ interface JSonPlaceHolderAPI {
     fun getTransactions(@Header("X-Auth-Token") accessToken: String): Call<List<myTransaction>>
 
     @POST("transaction")
-    fun createTransaction(@Header("X-Auth-Token") accessToken: String, @Body transaction: RequestBody): Call<myTransaction>
+    fun createTransaction(@Header("X-Auth-Token") accessToken: String, @Body infoAboutTransaction: RequestBody): Call<myTransaction>
 
     @PUT("transaction/{id}")
     fun updateTransaction(@Header("X-Auth-Token") accessToken: String, @Body transaction: RequestBody, @Path("id") id: String): Call<String>

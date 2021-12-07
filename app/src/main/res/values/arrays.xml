@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="namesCategory" >
-        <item>Еда</item>
+        <item>
+
+            Еда</item>
         <item>Развлечения</item>
         <item>Создать новую категорию</item>
     </string-array>

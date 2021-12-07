@@ -3,6 +3,7 @@ package com.example.wallet.ui.login
 import android.content.Context
 import android.util.Log
 import android.util.Patterns
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 
@@ -12,6 +13,7 @@ import com.example.wallet.data.model.LoggedInUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 class LoginViewModel(private val repository: Repository) : ViewModel() {
     private val TAG_Tim = "Timofey"
@@ -37,18 +39,26 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
     fun login(email: String, password: String) {
         // can be launched in a separate asynchronous job
     CoroutineScope(Main).launch {
-        when (val result = repository.dataSource.login(email, password)) {
-            is Result.Success -> {
-                _loginResult.value = LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
-            }
-            is Result.Error -> {
-                if (result.data.displayMessage != 0)
-                _loginResult.value = LoginResult(error = result.data.displayMessage)
-            }
-            is Result.Another -> {
-                _loginResult.value = LoginResult(error = R.string.something_went_wrong)
+        try {
+            val result = repository.dataSource.login(email, password)
+            when (result) {
+                is Result.Success -> {
+                    _loginResult.value = LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
+                }
+                is Result.Error -> {
+                    if (result.data.displayMessage != 0)
+                        _loginResult.value = LoginResult(error = result.data.displayMessage)
+                }
+                is Result.Another -> {
+                    _loginResult.value = LoginResult(error = R.string.something_went_wrong)
+                }
             }
         }
+        catch (e: IOException) {
+            Log.d(TAG_Tim, "catch $e")
+            _loginForm.value = LoginFormState(isNetworkError = true, isDataValid = true)
+        }
+
     }
 
 

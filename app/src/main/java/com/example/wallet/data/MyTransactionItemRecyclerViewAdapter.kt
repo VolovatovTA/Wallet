@@ -4,29 +4,30 @@ import android.text.Html
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.wallet.R
+import com.example.wallet.data.placeholder.PlaceholderContent
 
 import com.example.wallet.data.placeholder.PlaceholderContent.PlaceholderItem
 import com.example.wallet.databinding.FragmentItemBinding
 import com.example.wallet.databinding.ItemOfDayBinding
+import com.example.wallet.ui.transactions.TransactionsViewModel
+import java.util.*
+import kotlin.collections.ArrayList
 
 
-class MyTransactionItemRecyclerViewAdapter(
-    private val values: List<PlaceholderItem>
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    val listSelectedItems = ArrayList<Int>()
+object MyTransactionItemRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+
 
     lateinit var listenerLongClick: (position: Int) -> Boolean
     val TAG = "Timofey"
 
     init {
         Log.d(TAG, "init adapter")
-
+        PlaceholderContent.listSelectedItems.clear()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -53,11 +54,9 @@ class MyTransactionItemRecyclerViewAdapter(
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Log.d(TAG, "position = $position")
-        Log.d(TAG, "list = $listSelectedItems")
 
 
-        val item = values[position]
+        val item = PlaceholderContent.transactionsWithSeparators[position]
         when (holder) {
             is ViewHolderForTransaction -> {
                 with(holder) {
@@ -81,7 +80,7 @@ class MyTransactionItemRecyclerViewAdapter(
                         holder.image.setBackgroundResource(R.drawable.icons_background_red)
 
                     }
-                    if (listSelectedItems.contains(position)){
+                    if (PlaceholderContent.listSelectedItems.contains(PlaceholderContent.transactionsWithSeparators[position].transaction!!.transactionId)){
                         holder.itemView.setBackgroundResource(R.color.teal_700)
                     }
                     else {
@@ -124,12 +123,12 @@ class MyTransactionItemRecyclerViewAdapter(
 
     override fun getItemViewType(position: Int): Int {
 
-        return values[position].itemType
+        return PlaceholderContent.transactionsWithSeparators[position].itemType
 
     }
 
 
-    override fun getItemCount(): Int = values.size
+    override fun getItemCount(): Int = PlaceholderContent.transactionsWithSeparators.size
 
     fun setOnItemLongClick(listener: (position: Int) -> (Boolean)){
         this.listenerLongClick = listener
@@ -137,19 +136,29 @@ class MyTransactionItemRecyclerViewAdapter(
 
     var isMultiSelectedOn = false
 
-    inner class ViewHolderForTransaction(binding: FragmentItemBinding) :
+    class ViewHolderForTransaction(binding: FragmentItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnLongClickListener{
                 isMultiSelectedOn = true
                 binding.root.setBackgroundResource(R.color.teal_700)
-                listSelectedItems.add(absoluteAdapterPosition)
+                PlaceholderContent.listSelectedItems.add(
+                    PlaceholderContent.transactionsWithSeparators[
+                            absoluteAdapterPosition
+                    ].transaction!!.transactionId
+                )
+                TransactionsViewModel.setSelectionMode()
                 listenerLongClick.invoke(absoluteAdapterPosition)
+
             }
             binding.root.setOnClickListener {
                 if(isMultiSelectedOn){
                     binding.root.setBackgroundResource(R.color.teal_700)
-                    listSelectedItems.add(absoluteAdapterPosition)
+                    PlaceholderContent.listSelectedItems.add(
+                        PlaceholderContent.transactionsWithSeparators[
+                                absoluteAdapterPosition
+                        ].transaction!!.transactionId
+                    )
                     listenerLongClick.invoke(absoluteAdapterPosition)
                 }
 
@@ -164,7 +173,7 @@ class MyTransactionItemRecyclerViewAdapter(
 
     }
 
-    inner class ViewHolderForSeparateTransactions(binding: ItemOfDayBinding) :
+    class ViewHolderForSeparateTransactions(binding: ItemOfDayBinding) :
         RecyclerView.ViewHolder(binding.root) {
         val date: TextView = binding.separate
 

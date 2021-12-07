@@ -10,10 +10,8 @@ import org.json.JSONObject
 import retrofit2.*
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
-/**
- * Class that handles authentication w/ login credentials and retrieves user information.
- */
 class DataSource {
     private val CODE_INTERNAL_SERVER_ERROR = 500
     val CODE_NOT_CORRECT_PASSWORD_OR_EMAIL = 422
@@ -23,14 +21,18 @@ class DataSource {
     private var retrofitService: JSonPlaceHolderAPI = NetworkService.jSonPlaceHolderAPI
     private var accessToken: String? = null
     private var refreshToken: String? = null
-
+    var transactions = ArrayList<myTransaction>()
+    val categories = ArrayList<myTransaction>()
 
 
     suspend fun refreshAuth(refreshToken: String): String? {
 
 
-        val response = retrofitService.reSignIn(createJsonRequestBody(
-            "X-Auth-Token" to refreshToken)).awaitResponse()
+        val response = retrofitService.reSignIn(
+            createJsonRequestBody(
+                "X-Auth-Token" to refreshToken
+            )
+        ).awaitResponse()
 //        val user = getDecodedJWT(accessToken!!)
 
 //        if(response.message().)
@@ -42,10 +44,10 @@ class DataSource {
     suspend fun login(email: String, password: String): Result<LoggedInUser> {
 
         val response = retrofitService.signIn(
-                createJsonRequestBody(
-                    "email" to email, "password" to password
-                )
-         ).awaitResponse()
+            createJsonRequestBody(
+                "email" to email, "password" to password
+            )
+        ).awaitResponse()
         Log.d(TAG_Tim, "Response.code = ${response.code()}")
 
 
@@ -53,13 +55,19 @@ class DataSource {
             response.code() == CODE_EVERYTHING_IS_GOOD -> {
                 accessToken = response.body()!!.accessToken
                 refreshToken = response.body()!!.refreshToken
-                Result.Success(LoggedInUser( displayName = " name_from_JWT_mast_be decoded"))
+                Result.Success(LoggedInUser(displayName = " name_from_JWT_mast_be decoded"))
             }
             response.code() == CODE_NOT_CORRECT_PASSWORD_OR_EMAIL -> {
-                Result.Error(LoggedInUser(displayMessage = R.string.login_failed_by_password_or_email), IOException("password or email is not correct"))
+                Result.Error(
+                    LoggedInUser(displayMessage = R.string.login_failed_by_password_or_email),
+                    IOException("password or email is not correct")
+                )
             }
             response.code() == CODE_INTERNAL_SERVER_ERROR -> {
-                Result.Error(LoggedInUser(displayMessage =  R.string.server_crushed), IOException("Internal server error"))
+                Result.Error(
+                    LoggedInUser(displayMessage = R.string.server_crushed),
+                    IOException("Internal server error")
+                )
             }
             else -> {
                 Result.Another(LoggedInUser(displayMessage = R.string.smth_wrong))
@@ -69,33 +77,28 @@ class DataSource {
     }
 
 
-
     fun logout() {
         // TODO: revoke authentication
     }
 
 
-    suspend fun signUp(userFirstName: String, userSecondName: String, email: String, password: String, confirmPassword: String): Result<RegistratedInUser> {
+    suspend fun signUp(
+        userFirstName: String,
+        userSecondName: String,
+        email: String,
+        password: String,
+        confirmPassword: String
+    ): Result<RegistratedInUser> {
 
 
-        retrofitService.signUp(createJsonRequestBody(
-            "name" to userFirstName, "email" to email, "password" to password)).awaitResponse()
+        retrofitService.signUp(
+            createJsonRequestBody(
+                "name" to userFirstName, "email" to email, "password" to password
+            )
+        ).awaitResponse()
         val newUser = RegistratedInUser(userFirstName, userSecondName)
         return Result.Success(newUser)
     }
-
-
-    class Json4Kotlin_Base {
-        lateinit var user_id: String
-        lateinit var id: String
-        lateinit var exp: String
-
-    }
-    lateinit var transactions: List<myTransaction>
-    lateinit var transaction: myTransaction
-    lateinit var categories: List<MyCategory>
-
-
 
 
     private fun getDecodedJWT(jwt: String?): String {
@@ -122,7 +125,11 @@ class DataSource {
                         } else {
                             ""
                         }
-                    result = if(index == 2) {decodedPart} else{""}
+                    result = if (index == 2) {
+                        decodedPart
+                    } else {
+                        ""
+                    }
 
                     Log.d("Timofey", "result = $result")
                 }
@@ -141,28 +148,25 @@ class DataSource {
         )
 
 
-
-
-
     suspend fun getTransactions() {
         val response = retrofitService.getTransactions(accessToken!!).awaitResponse()
         Log.d(TAG_Tim, "response.message = ${response.message()}")
         Log.d(TAG_Tim, "response.body = ${response.body()}")
-        transactions = response.body()!!
+        transactions.addAll(response.body()!!)
     }
 
-//    fun getTransaction(idTransaction: UUID, accessToken: String) {
-//        retrofitService.getTransaction(accessToken, idTransaction.toString()).enqueue(callbackTransaction)
-//
-//    }
+    suspend fun getTransaction(idTransaction: UUID, accessToken: String): Response<myTransaction> {
+        return retrofitService.getTransaction(accessToken, idTransaction.toString()).awaitResponse()
+
+    }
 
     suspend fun createTransaction(
         comment: String,
         amount: Float,
         currency: String,
         category: String,
-         type: String
-    ) : Result<CreateTransactionInUser> {
+        type: String
+    ): Result<CreateTransactionInUser> {
         Log.d(TAG_Tim, "type = $type")
 
         val response = retrofitService.createTransaction(
@@ -172,11 +176,14 @@ class DataSource {
                 "amount" to amount,
                 "currency" to currency,
                 "category" to category,
-                "type" to type)).awaitResponse()
+                "type" to type
+            )
+        ).awaitResponse()
 
-        return if (response.code() == CODE_EVERYTHING_IS_GOOD){
+        transactions.add(response.body()!!)
+        return if (response.code() == CODE_EVERYTHING_IS_GOOD) {
             Result.Success(CreateTransactionInUser("OK", response.body()!!))
-        } else{
+        } else {
             Result.Error(CreateTransactionInUser("smth went wrong"), IOException(""))
         }
 
@@ -199,15 +206,31 @@ class DataSource {
                 "amount" to amount.toString(),
                 "currency" to currency,
                 "dateOfCreate" to dateOfCreate,
-                "dateOfUpdate" to dateOfUpdate))
+                "dateOfUpdate" to dateOfUpdate
+            )
+        )
     }
 
-    fun deleteTransaction(id: UUID, accessToken: String) {
+    suspend fun deleteTransaction(id: UUID): Response<String> {
+        return retrofitService.deleteTransaction(
+            accessToken!!,
+            id.toString()
+        ).awaitResponse()
 
     }
 }
 
-data class CreateTransactionInUser (
-val inform :String = "",
-val transaction: myTransaction? = null
+fun ArrayList<myTransaction>.findById(id: UUID): myTransaction {
+    for (el in this) {
+        if (el.transactionId == id) {
+            return el
+        }
+    }
+    throw IOException("Couldn't find Transaction with id = $id")
+
+}
+
+data class CreateTransactionInUser(
+    val inform: String = "",
+    val transaction: myTransaction? = null
 )

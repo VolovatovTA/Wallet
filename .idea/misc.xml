@@ -15,6 +15,7 @@
         <entry key="..\:/PROJECTS/Wallet/app/src/main/res/drawable/transaction_background.xml" value="0.2703125" />
         <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/blank_for_create_transaction_fragment.xml" value="0.25416666666666665" />
+        <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/fragment_details_transaction.xml" value="0.25416666666666665" />
         <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/fragment_item.xml" value="0.4" />
         <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/fragment_item_list.xml" value="0.4" />
         <entry key="..\:/PROJECTS/Wallet/app/src/main/res/layout/fragment_login.xml" value="0.264" />
